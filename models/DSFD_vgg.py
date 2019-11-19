@@ -50,7 +50,6 @@ class FEM(nn.Module):
         out = F.relu(out, inplace=True)
         return out
 
-
 class DSFD(nn.Module):
     """Single Shot Multibox Architecture
     The network is composed of a base VGG network followed by the
@@ -90,13 +89,7 @@ class DSFD(nn.Module):
         self.fpn_topdown2 = nn.Conv2d(512, 512,  kernel_size=1, stride=1, padding=0)
         self.fpn_topdown1 = nn.Conv2d(512, 256, kernel_size=1, stride=1, padding=0)
 
-
-        self.fpn_latlayer5 = nn.Conv2d(512, 512,   kernel_size=1, stride=1, padding=0)
-        self.fpn_latlayer4 = nn.Conv2d(1024, 1024, kernel_size=1, stride=1, padding=0)
-        self.fpn_latlayer3 = nn.Conv2d(512, 512,   kernel_size=1, stride=1, padding=0)
-        self.fpn_latlayer2 = nn.Conv2d(512, 512,   kernel_size=1, stride=1, padding=0)
-        self.fpn_latlayer1 = nn.Conv2d(256, 256,   kernel_size=1, stride=1, padding=0)
-
+        """
         self.fpn_topdown = nn.ModuleList([
             nn.Conv2d(256, 256, 1, 1, padding=0),
             nn.Conv2d(256, 512, 1, 1, padding=0),
@@ -105,7 +98,6 @@ class DSFD(nn.Module):
             nn.Conv2d(512, 512, 1, 1, padding=0),
             nn.Conv2d(512, 256, 1, 1, padding=0),
         ])
-
         self.fpn_latlayer = nn.ModuleList([
             nn.Conv2d(512, 512, 1, 1, padding=0),
             nn.Conv2d(1024, 1024, 1, 1, padding=0),
@@ -113,13 +105,27 @@ class DSFD(nn.Module):
             nn.Conv2d(512, 512, 1, 1, padding=0),
             nn.Conv2d(256, 256, 1, 1, padding=0),
         ])
+        """
+        self.fpn_latlayer5 = nn.Conv2d(512, 512,   kernel_size=1, stride=1, padding=0)
+        self.fpn_latlayer4 = nn.Conv2d(1024, 1024, kernel_size=1, stride=1, padding=0)
+        self.fpn_latlayer3 = nn.Conv2d(512, 512,   kernel_size=1, stride=1, padding=0)
+        self.fpn_latlayer2 = nn.Conv2d(512, 512,   kernel_size=1, stride=1, padding=0)
+        self.fpn_latlayer1 = nn.Conv2d(256, 256,   kernel_size=1, stride=1, padding=0)
 
+        self.fpn_topdown = nn.ModuleList([self.fpn_topdown6, self.fpn_topdown5,
+                                        self.fpn_topdown4, self.fpn_topdown3,
+                                        self.fpn_topdown2, self.fpn_topdown1])
+
+        self.fpn_latlayer = nn.ModuleList([self.fpn_latlayer5, self.fpn_latlayer4,
+                                        self.fpn_latlayer3, self.fpn_latlayer2,
+                                        self.fpn_latlayer1 ])
+        # Feature enhance module
+        """
         self.fpn_fem = nn.ModuleList([
             FEM(256), FEM(512), FEM(512),
             FEM(1024), FEM(512), FEM(256),
         ])
-
-        # Feature enhance module
+        """
         fem_cfg = [256, 512, 512, 1024, 512, 256]
         self.fpn_fem3_3 = FEM(fem_cfg[0])
         self.fpn_fem4_3 = FEM(fem_cfg[1])
@@ -128,6 +134,10 @@ class DSFD(nn.Module):
         self.fpn_fem6_2 = FEM(fem_cfg[4])
         self.fpn_fem7_2 = FEM(fem_cfg[5])
 
+        self.fpn_fem = nn.ModuleList([self.fpn_fem3_3,  self.fpn_fem4_3,
+                                    self.fpn_fem5_3,  self.fpn_fem7,
+                                    self.fpn_fem6_2,  self.fpn_fem7_2])
+        
         self.L2Normef1 = L2Norm(256, 10)
         self.L2Normef2 = L2Norm(512, 8)
         self.L2Normef3 = L2Norm(512, 5)
@@ -141,7 +151,6 @@ class DSFD(nn.Module):
         if self.phase=='test':
             self.softmax = nn.Softmax(dim=-1)
             self.detect = Detect(cfg)
-
 
     def forward(self, x):
         """Applies network layers and ops on input image(s) x.
