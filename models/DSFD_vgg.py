@@ -82,14 +82,15 @@ class DSFD(nn.Module):
         self.L2Normof3 = L2Norm(512, 5)
 
         # Feature Pyramid Network
+        """
         self.fpn_topdown6 = nn.Conv2d(256, 256,  kernel_size=1, stride=1, padding=0)
         self.fpn_topdown5 = nn.Conv2d(256, 512,  kernel_size=1, stride=1, padding=0)
         self.fpn_topdown4 = nn.Conv2d(512, 1024, kernel_size=1, stride=1, padding=0)
         self.fpn_topdown3 = nn.Conv2d(1024, 512, kernel_size=1, stride=1, padding=0)
         self.fpn_topdown2 = nn.Conv2d(512, 512,  kernel_size=1, stride=1, padding=0)
         self.fpn_topdown1 = nn.Conv2d(512, 256, kernel_size=1, stride=1, padding=0)
-
         """
+        
         self.fpn_topdown = nn.ModuleList([
             nn.Conv2d(256, 256, 1, 1, padding=0),
             nn.Conv2d(256, 512, 1, 1, padding=0),
@@ -119,8 +120,9 @@ class DSFD(nn.Module):
         self.fpn_latlayer = nn.ModuleList([self.fpn_latlayer5, self.fpn_latlayer4,
                                         self.fpn_latlayer3, self.fpn_latlayer2,
                                         self.fpn_latlayer1 ])
-        # Feature enhance module
         """
+        # Feature enhance module
+        
         self.fpn_fem = nn.ModuleList([
             FEM(256), FEM(512), FEM(512),
             FEM(1024), FEM(512), FEM(256),
@@ -137,7 +139,7 @@ class DSFD(nn.Module):
         self.fpn_fem = nn.ModuleList([self.fpn_fem3_3,  self.fpn_fem4_3,
                                     self.fpn_fem5_3,  self.fpn_fem7,
                                     self.fpn_fem6_2,  self.fpn_fem7_2])
-        
+        """
         self.L2Normef1 = L2Norm(256, 10)
         self.L2Normef2 = L2Norm(512, 8)
         self.L2Normef3 = L2Norm(512, 5)
@@ -241,19 +243,19 @@ class DSFD(nn.Module):
 
         conv7 = F.relu(self.fpn_topdown[0](of6), inplace=True)
         x = F.relu(self.fpn_topdown[1](conv7), inplace=True)
-        conv6 = F.relu(self._upsample_prod(x, self.fpn_latlayer[0](of5)), inplace=True)
+        conv6 = F.relu(self._upsample_product(x, self.fpn_latlayer[0](of5)), inplace=True)
 
         x = F.relu(self.fpn_topdown[2](conv6), inplace=True)
-        convfc7_2 = F.relu(self._upsample_prod(x, self.fpn_latlayer[1](of4)), inplace=True)
+        convfc7_2 = F.relu(self._upsample_product(x, self.fpn_latlayer[1](of4)), inplace=True)
 
         x = F.relu(self.fpn_topdown[3](convfc7_2), inplace=True)
-        conv5 = F.relu(self._upsample_prod(x, self.fpn_latlayer[2](of3)), inplace=True)
+        conv5 = F.relu(self._upsample_product(x, self.fpn_latlayer[2](of3)), inplace=True)
 
         x = F.relu(self.fpn_topdown[4](conv5), inplace=True)
-        conv4 = F.relu(self._upsample_prod(x, self.fpn_latlayer[3](of2)), inplace=True)
+        conv4 = F.relu(self._upsample_product(x, self.fpn_latlayer[3](of2)), inplace=True)
 
         x = F.relu(self.fpn_topdown[5](conv4), inplace=True)
-        conv3 = F.relu(self._upsample_prod(x, self.fpn_latlayer[4](of1)), inplace=True)
+        conv3 = F.relu(self._upsample_product(x, self.fpn_latlayer[4](of1)), inplace=True)
 
         ef1 = self.fpn_fem[0](conv3)
         ef1 = self.L2Normef1(ef1)
