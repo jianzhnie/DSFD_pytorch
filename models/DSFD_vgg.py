@@ -171,8 +171,6 @@ class DSFD(nn.Module):
                     2: localization layers, Shape: [batch,num_priors*4]
                     3: priorbox layers, Shape: [2,num_priors*4]
         """    
-
-        image_size = [x.shape[2] , x.shape[3]]
         pal1_sources = list()
         pal2_sources = list()
         loc_pal1 = list()
@@ -219,7 +217,8 @@ class DSFD(nn.Module):
         of6 = x
         pal1_sources.append(of6)
 
-        ## part2
+        ## fpn module
+        """
         lfpn6 = self.fpn_topdown6(of6)
         lfpn5 = self._upsample_product(self.fpn_topdown5(of6), self.fpn_latlayer5(of5))
         lfpn4 = self._upsample_product(self.fpn_topdown4(of5), self.fpn_latlayer4(of4))
@@ -238,6 +237,34 @@ class DSFD(nn.Module):
         ef4 = self.fpn_fem7(lfpn4)
         ef5 = self.fpn_fem6_2(lfpn5)
         ef6 = self.fpn_fem7_2(lfpn6)
+        """
+
+        conv7 = F.relu(self.fpn_topdown6(of6), inplace=True)
+
+        x = F.relu(self.fpn_topdown5(conv7), inplace=True)
+        conv6_2_x = F.relu(self._upsample_prod(x, self.fpn_latlayer5(of5)), inplace=True)
+
+        x = F.relu(self.fpn_topdown4(conv6), inplace=True)
+        convfc7 = F.relu(self._upsample_prod(x, self.fpn_latlayer4(of4)), inplace=True)
+
+        x = F.relu(self.fpn_topdown3(convfc7), inplace=True)
+        conv5 = F.relu(self._upsample_prod(x, self.fpn_latlayer3(of3)), inplace=True)
+
+        x = F.relu(self.fpn_topdown2(conv5), inplace=True)
+        conv4 = F.relu(self._upsample_prod(x, self.fpn_latlayer2(of2)), inplace=True)
+
+        x = F.relu(self.fpn_topdown1(conv4), inplace=True)
+        conv3 = F.relu(self._upsample_prod(x, self.fpn_latlayer1(of1)), inplace=True)
+
+        ef1 = self.fpn_fem[0](conv3)
+        ef1 = self.L2Normef1(ef1)
+        ef2 = self.fpn_fem[1](conv4)
+        ef2 = self.L2Normef2(ef2)
+        ef3 = self.fpn_fem[2](conv5)
+        ef3 = self.L2Normef3(ef3)
+        ef4 = self.fpn_fem[3](convfc7)
+        ef5 = self.fpn_fem[4](conv6)
+        ef6 = self.fpn_fem[5](conv7)
 
         pal2_sources = (ef1, ef2, ef3, ef4, ef5, ef6)
 
