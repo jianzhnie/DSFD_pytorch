@@ -15,8 +15,9 @@ the AP in AFW,PASCAL,FDDB as following:
 |	99.89   |    99.11  |  0.983   |
  
 I'm using resnet50/resnet101 to train DSFD,the result will be published later on 
+
 ### Requirement
-* pytorch 0.3 
+* pytorch 1.3 
 * opencv 
 * numpy 
 * easydict
@@ -29,7 +30,7 @@ I'm using resnet50/resnet101 to train DSFD,the result will be published later on
 
 ### Train 
 ``` 
-python train.py --batch_size 4 
+python main.py --batch_size 4 
 		--model vgg\resnet50\resnet101 
 		--lr 5e-4
 ``` 
@@ -61,11 +62,13 @@ python demo.py
 ### Result
 1. demo
 <div align="center">
-<img src="https://github.com/yxlijun/DSFD.pytorch/blob/master/tmp/0_Parade_marchingband_1_488.jpg" height="300px" alt="demo" >
-<img src="https://github.com/yxlijun/DSFD.pytorch/blob/master/tmp/0_Parade_marchingband_1_20.jpg" height="300px" alt="demo" >
+<img src="https://github.com/jianzhnie/DSFD_pytorch/blob/master/img/0_Parade_marchingband_1_488.jpg" height="300px" alt="demo" >
+<img src="https://github.com/jianzhnie/DSFD_pytorch/blob/master/img/0_Parade_marchingband_1_20.jpg" height="300px" alt="demo" >
 </div>
 
 
 ### References
 * [Dual Shot Face Detector](https://arxiv.org/abs/1810.10220?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed%3A+arxiv%2FQSXk+%28ExcitingAds%21+cs+updates+on+arXiv.org%29)
 * [ssd.pytorch](https://github.com/amdegroot/ssd.pytorch)
+* [S3FD_pytorch](https://github.com/jianzhnie/S3FD_pytorch)
+* [FaceDetection-DSFD](https://github.com/TencentYoutuResearch/FaceDetection-DSFD)
