@@ -1,2 +1,2 @@
 # DSFD_pytorch
-pytorch 实现的DSFD， 更高效更简洁
+DSFD 的pytorch 实现，代码简洁高效

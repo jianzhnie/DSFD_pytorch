@@ -1,0 +1,10 @@
+__pycache__
+*.zip
+*.out
+*.fid_cache
+*.npy
+*.gz
+*.ipynb
+*.ckpt
+.vscode/
+*.jpg
